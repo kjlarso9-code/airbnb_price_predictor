@@ -3,39 +3,47 @@
 Machine Learning • Streamlit App • Databricks • End-to-End Deployment
 
 ## 📌 Project Overview
+This project predicts nightly Airbnb prices for San Diego listings using machine learning.
 
-This project predicts nightly Airbnb prices using machine learning models trained on a San Diego Airbnb dataset. 
-It includes:
-- Full data cleaning + preprocessing
+The project includes:
+- Data cleaning & preprocessing (Databricks)
 - Feature engineering
-- Model development (baseline → Random Forest)
-- MLflow tracking in Databricks
-- A deployed Streamlit web app that allows users to enter listing details and receive a predicted price
-- End-to-end workflow demonstration
-- GitHub repository
+- Model selection & hyperparameter tuning
+- MLflow experiment tracking
+- Exporting the best model as a .pkl
+- Deploying a Streamlit web app connected to GitHub
+
+The final deliverable is a fully deployed interactive application that allows users to estimate Airbnb prices based on property characteristics.
 
 ## 🎯 Business Problem
+Airbnb hosts must determine the optimal nightly price.
 
-Airbnb hosts often struggle to set the correct price—too low means lost revenue, too high means fewer bookings.
-This project helps solve:
+If the price is:
+- Too low: revenue is lost
+- Too high: bookings decrease
+
+This project answers:
 - What should a host charge per night?
-- How do listing features influence price?
-- Which neighborhoods, room types, or amenities increase value?
+- Which features most influence price?
+- How do reviews, room type, and neighborhood affect value?
 
-Accurate price predictions help hosts optimize revenue and maximize occupancy.
+Accurate pricing helps hosts maximize occupancy and profit.
 
 ## 🧹 Data Cleaning & Preparation
+Performed in Databricks:
+- Cleaning
+- Removed missing/invalid rows (bathrooms, bedrooms, scores)
+- Converted price from string → numeric ($174.00 → 174.00)
+- Filtered extreme outliers
+- Feature Engineering
 
-Steps performed in Databricks:
-- Removed missing or invalid entries (bathrooms, review scores, bedrooms, neighborhood)
-- Converted price column to numeric
-
-One-hot encoded categorical fields:
+One-hot encoded:
 - room_type
 - neighbourhood
-- Standardized numerical values
 
-Selected final model features:
+Standardized all numeric columns
+
+Final model training features:
 - bedrooms
 - bathrooms
 - accommodates
@@ -50,78 +58,61 @@ Selected final model features:
 - neighbourhood_Tijuana, Baja California, Mexico
 
 ## 🤖 Model Development
-- Baseline Model
+
+Multiple models were tested and logged in MLflow:
+### Baseline
 - Linear Regression
-- MAE: (insert from your results)
-- R² Score: (insert)
-- Advanced Model — Random Forest Regressor
-- 200 estimators
-- Random state = 42
-- Tracked using MLflow
-- Best performance among tested models
-- Why Random Forest Won
-- Handles nonlinear relationships
-- Less sensitive to outliers
-- Performs well on tabular Airbnb-style datasets
-- Requires minimal feature scaling
+- MAE: 447.11
+- R²: 0.805
+- RMSE: 1745.18
+  
+### Advanced Models
+- Random Forest Regressor (final chosen model)
+  - 200 estimators
+  - random_state = 42
+  - Best performance across RMSE/MAE
+  - Robust to outliers and nonlinear patterns
+    
+### Why Random Forest Won
+- Handles complex interactions
+- Low overfitting risk
+- Strong performance on tabular datasets
+- No need for heavy scaling
+
+Final model exported as:
+✔ airbnb_model_small.pkl
 
 ## 🖥 Deployment (Streamlit App)
+The Streamlit application:
+- Accepts user inputs
+- Builds a 12-feature vector
+- Applies one-hot encoding logic
+- Loads the trained model .pkl
+- Returns an estimated nightly price
 
-The Streamlit app accepts user inputs such as:
-- Bedrooms
-- Bathrooms
-- Accommodates
-- Latitude & longitude
-- Minimum nights
-- Number of reviews
-- Review score
-- Room type
-- Neighborhood
-
-Then predicts:
-
-## 🎯 Estimated nightly price
-
-The UI includes notes on limitations, model confidence, and how predictions should be interpreted.
-
-# 🌐 Links
-
-🔗 Deployed App (Streamlit): (https://airbnbpricepredictor-9hepznyari5xotvfaz6z7e.streamlit.app/) <br>
-📘 Databricks Workspace / MLflow: (https://dbc-65647401-6b36.cloud.databricks.com/editor/notebooks/2028523477733230?o=1081562564116675) <br>
-🗂 GitHub Repository: (this repo)
+## 🔗 Live App
+https://airbnbpricepredictor-9hepznyari5xotvfaz6z7e.streamlit.app/
 
 📁 Repository Structure <br>
 airbnb_price_predictor/ <br>
-app.py - Streamlit application <br>
-requirements.txt - Dependencies for Render <br>
-airbnb_model_small.pkl - Saved Random Forest model <br>
-README.md - Project documentation <br>
-notebooks - Databricks notebooks <br>
+app.py = Streamlit application <br>
+requirements.txt = Dependencies for Render <br>
+airbnb_model_small.pkl = Saved Random Forest model <br>
+README.md = Project documentation <br>
+notebooks = Databricks notebooks <br>
 
 ## 🧠 How the App Works
+1. User enters listing details
+2. Streamlit preprocesses input (one-hot encoding, numeric conversion)
+3. Data is passed into the Random Forest model
+4. Prediction is displayed in an interactive UI
 
-The model expects a 12-feature input vector.
-Streamlit reconstructs this vector from user selections by:
-- Collecting numerical inputs
-- Converting categorical selections to one-hot encoded format
-- Feeding the array into the trained Random Forest model
+## 🚀 How to Run Locally
+pip install -r requirements.txt <br>
+streamlit run app.py
 
-Output is displayed in a clean, user-friendly UI.
-
-## 🎥 Presentation Requirements (Project Final Deliverables)
-
-This project includes:
-
-✔ Business framing
-✔ Data cleaning & EDA
-✔ Model development + comparison
-✔ Best model justification
-✔ Deployment demo (Streamlit app)
-✔ End-to-end workflow
-✔ Repository documentation
-
-🙋‍♀️ Author
+## 🙋‍♀️ Author
 
 Kendall Larson <br>
-CIS 508 – Final Project <br>
+CIS 508 – Term Project <br>
 Instructor: Sang-Pil Han
