@@ -1,8 +1,8 @@
-🏡 Airbnb Price Predictor
+## 🏡 Airbnb Price Predictor
 
 Machine Learning • Streamlit App • Databricks • End-to-End Deployment
 
-📌 Project Overview
+# 📌 Project Overview
 
 This project predicts nightly Airbnb prices using machine learning models trained on a San Diego Airbnb dataset. It includes:
 
@@ -20,7 +20,7 @@ End-to-end workflow demonstration
 
 GitHub repository + Render deployment (app link included)
 
-🎯 Business Problem
+# 🎯 Business Problem
 
 Airbnb hosts often struggle to set the correct price—too low means lost revenue, too high means fewer bookings.
 This project helps solve:
@@ -33,7 +33,7 @@ Which neighborhoods, room types, or amenities increase value?
 
 Accurate price predictions help hosts optimize revenue and maximize occupancy.
 
-🧹 Data Cleaning & Preparation
+# 🧹 Data Cleaning & Preparation
 
 Steps performed in Databricks:
 
@@ -64,7 +64,7 @@ room_type_Private room
 room_type_Shared room
 neighbourhood_Tijuana, Baja California, Mexico
 
-🤖 Model Development
+# 🤖 Model Development
 Baseline Model
 
 Linear Regression
@@ -97,7 +97,7 @@ Performs well on tabular Airbnb-style datasets
 
 Requires minimal feature scaling
 
-🖥 Deployment (Streamlit App)
+# 🖥 Deployment (Streamlit App)
 
 The Streamlit app accepts user inputs such as:
 
@@ -121,11 +121,11 @@ Neighborhood
 
 Then predicts:
 
-🎯 Estimated nightly price
+# 🎯 Estimated nightly price
 
 The UI includes notes on limitations, model confidence, and how predictions should be interpreted.
 
-🌐 Links
+# 🌐 Links
 
 🔗 Deployed App (Render): (add your link here)
 📘 Databricks Workspace / MLflow: (https://dbc-65647401-6b36.cloud.databricks.com/editor/notebooks/2028523477733230?o=1081562564116675)
@@ -140,7 +140,7 @@ airbnb_price_predictor/
 ├── README.md             # Project documentation
 └── /notebooks            # Databricks notebooks (optional)
 
-🧠 How the App Works
+# 🧠 How the App Works
 
 The model expects a 12-feature input vector.
 Streamlit reconstructs this vector from user selections by:
@@ -153,7 +153,7 @@ Feeding the array into the trained Random Forest model
 
 Output is displayed in a clean, user-friendly UI.
 
-🎥 Presentation Requirements (Project Final Deliverables)
+# 🎥 Presentation Requirements (Project Final Deliverables)
 
 This project includes:
 
