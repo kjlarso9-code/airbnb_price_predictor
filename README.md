@@ -50,37 +50,20 @@ Selected final model features:
 - neighbourhood_Tijuana, Baja California, Mexico
 
 ## 🤖 Model Development
-Baseline Model
-
-Linear Regression
-
-MAE: (insert from your results)
-
-R² Score: (insert)
-
-Advanced Model — Random Forest Regressor
-
-200 estimators
-
-Random state = 42
-
-MAE: (insert)
-
-R² Score: (insert)
-
-Tracked using MLflow
-
-Best performance among tested models
-
-Why Random Forest Won
-
-Handles nonlinear relationships
-
-Less sensitive to outliers
-
-Performs well on tabular Airbnb-style datasets
-
-Requires minimal feature scaling
+- Baseline Model
+- Linear Regression
+- MAE: (insert from your results)
+- R² Score: (insert)
+- Advanced Model — Random Forest Regressor
+- 200 estimators
+- Random state = 42
+- Tracked using MLflow
+- Best performance among tested models
+- Why Random Forest Won
+- Handles nonlinear relationships
+- Less sensitive to outliers
+- Performs well on tabular Airbnb-style datasets
+- Requires minimal feature scaling
 
 ## 🖥 Deployment (Streamlit App)
 
