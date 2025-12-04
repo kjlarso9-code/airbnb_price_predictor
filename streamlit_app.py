@@ -4,23 +4,21 @@ import numpy as np
 import joblib
 
 # ------------------------------
-# Load Your Safe Model (Pickled)
+# Load Model
 # ------------------------------
 @st.cache_resource
 def load_model():
-    return joblib.load("airbnb_streamlit_safe.pkl")
+    # IMPORTANT:
+    # This must match the actual file name in your Streamlit repo.
+    return joblib.load("airbnb_nn_model.pkl")
 
 model = load_model()
-
-
 
 # ------------------------------
 # UI Title & Description
 # ------------------------------
 st.title("🏡 Airbnb Price Predictor – San Diego")
 st.write("Enter listing details below to estimate the nightly price.")
-
-
 
 # ------------------------------
 # Inputs
@@ -41,39 +39,12 @@ room_type = st.selectbox("Room Type", [
     "Hotel room"
 ])
 
-neighbourhood = st.selectbox("Neighbourhood", [
-    "Allied Gardens", "Alta Vista", "Amphitheater And Water Park", "Balboa Park", "Bario Logan",
-    "Bay Ho", "Bay Park", "Bay Terrace", "Bird Land", "Bonita Long Canyon",
-    "Carmel Mountain", "Carmel Valley", "Chollas View", "City Heights East",
-    "City Heights West", "Clairemont Mesa East", "Clairemont Mesa West",
-    "College Area", "College West", "Columbia", "Core-columbia", "Corridor",
-    "Cortez", "Del Mar Heights", "Del Mar Mesa", "East Village",
-    "Eastlake Trails", "Eastlake Vistas", "Eastlake Woods", "Egger Highlands",
-    "El Cerritos", "Emerald Hills", "Encanto", "Estlake Greens",
-    "Gaslamp Quarter", "Gateway", "Grant Hill", "Grantville", "Horton Plaza",
-    "Jomacha-Lomita", "Kearny Mesa", "La Jolla", "La Jolla Village",
-    "Lakeside", "Liberty Station", "Lincoln Park", "Little Italy",
-    "Loma Portal", "Marina", "Memorial", "Middletown", "Midtown", "Mira Mesa",
-    "Miramar", "Mission Bay Park", "Mission Beach", "Mission Valley East",
-    "Mission Valley West", "Morena", "Mountain View", "Nestor", "Normal Heights",
-    "North City", "North Clairemont", "North Park", "Ocean Beach", "Old Town",
-    "Otay Mesa", "Otay Mesa West", "Pacific Beach", "Palm City", "Paradise Hills",
-    "Paseo Del Sol", "Point Loma Heights", "Rancho Bernardo", "Rancho Encantada",
-    "Rancho Penasquitos", "Rancho San Diego", "Ridley", "Rio Vista",
-    "Rolando", "Rolando Park", "San Carlos", "San Pasqual", "San Ysidro",
-    "Scripps Ranch", "Serra Mesa", "Shelltown", "Sorrento Valley",
-    "South Park", "Southeastern San Diego", "Skyline", "Talmadge",
-    "Tierrasanta", "University City", "University Heights", "Valencia Park",
-    "Webster"
-])
-
-
+neighbourhood = st.text_input("Neighbourhood (exact name)", "")
 
 # ------------------------------
 # Convert Inputs → Model Vector
 # ------------------------------
 def encode_inputs():
-    # Base data row
     data = {
         "bedrooms": bedrooms,
         "bathrooms": bathrooms,
@@ -89,24 +60,20 @@ def encode_inputs():
 
     df = pd.DataFrame([data])
 
-    # One-hot encode the two categorical fields
     df = pd.get_dummies(df, columns=["room_type", "neighbourhood_cleansed"], drop_first=False)
 
-    # Ensure columns align with training
     for col in model.feature_names_in_:
         if col not in df.columns:
             df[col] = 0
 
-    # Arrange in correct order
     df = df[model.feature_names_in_]
+
     return df
-
-
 
 # ------------------------------
 # Predict Button
 # ------------------------------
 if st.button("Predict Nightly Price"):
     X = encode_inputs()
-    prediction = model.predict(X)[0]
-    st.success(f"Estimated Price: **${prediction:,.2f}**")
+    pred = model.predict(X)[0]
+    st.success(f"Estimated Price: **${pred:,.2f}**")
