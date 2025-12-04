@@ -10,7 +10,7 @@ from io import BytesIO
 # ------------------------------
 @st.cache_resource
 def load_model():
-    url = https://drive.google.com/uc?export=download&id=181rfYZ9EEJCKchFBi_Ct7bpa4nmrxhjD  # <-- replace with real link
+    url = https://"drive.google.com/uc?export=download&id=181rfYZ9EEJCKchFBi_Ct7bpa4nmrxhjD"  # <-- replace with real link
     response = requests.get(url)
     model_bytes = BytesIO(response.content)
     model = joblib.load(model_bytes)
