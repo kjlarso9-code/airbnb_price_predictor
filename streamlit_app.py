@@ -2,53 +2,45 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import joblib
+import requests
+from io import BytesIO
 
-# -------------------------------
-# Load trained model
-# -------------------------------
+# ------------------------------
+# Load Model from Google Drive
+# ------------------------------
 @st.cache_resource
 def load_model():
-    return joblib.load("airbnb_model_small.pkl")
+    url = "YOUR_DIRECT_DOWNLOAD_LINK_HERE"  # <-- replace with real link
+    response = requests.get(url)
+    model_bytes = BytesIO(response.content)
+    model = joblib.load(model_bytes)
+    return model
 
 model = load_model()
 
-# -------------------------------
-# Streamlit App UI
-# -------------------------------
 st.title("🏡 Airbnb Price Predictor")
-st.write("Enter your Airbnb listing details to estimate the nightly price.")
+st.write("Enter details below to predict nightly price.")
 
-# -------------------------------
+# ------------------------------
 # User Inputs
-# -------------------------------
+# ------------------------------
+bedrooms = st.number_input("Bedrooms", min_value=0, max_value=10, step=1)
+bathrooms = st.number_input("Bathrooms", min_value=0.0, max_value=10.0, step=0.5)
+accommodates = st.number_input("Accommodates", min_value=0, max_value=16, step=1)
+minimum_nights = st.number_input("Minimum Nights", min_value=1, max_value=365, step=1)
+number_of_reviews = st.number_input("Number of Reviews", min_value=0, max_value=5000, step=1)
+review_scores_rating = st.number_input("Review Score Rating", min_value=20.0, max_value=100.0, step=1.0)
+latitude = st.number_input("Latitude", format="%.6f")
+longitude = st.number_input("Longitude", format="%.6f")
 
-bedrooms = st.number_input("Bedrooms", min_value=0, max_value=10, value=1)
-bathrooms = st.number_input("Bathrooms", min_value=0.0, max_value=10.0, value=1.0, step=0.5)
-accommodates = st.number_input("Accommodates", min_value=1, max_value=16, value=2)
-minimum_nights = st.number_input("Minimum Nights", min_value=1, max_value=30, value=1)
-number_of_reviews = st.number_input("Number of Reviews", min_value=0, max_value=1000, value=10)
-review_scores_rating = st.number_input("Review Score Rating", min_value=0.0, max_value=5.0, value=4.5, step=0.1)
+room_type = st.selectbox("Room Type", ["Hotel room", "Private room", "Shared room", "Entire home/apt"])
+neighbourhood = st.text_input("Neighbourhood")
 
-latitude = st.number_input("Latitude", value=32.7157)
-longitude = st.number_input("Longitude", value=-117.1611)
-
-room_type = st.selectbox("Room Type", [
-    "Entire home/apt",
-    "Private room",
-    "Shared room",
-    "Hotel room"
-])
-
-neighbourhood_cleansed = st.text_input("Neighborhood", "Downtown")
-
-# -------------------------------
-# Predict button
-# -------------------------------
-
-if st.button("Predict Price"):
-
-    # Create a dataframe to match model features
-    input_data = pd.DataFrame([{
+# ------------------------------
+# Convert to model input format
+# ------------------------------
+def encode_inputs():
+    data = {
         "bedrooms": bedrooms,
         "bathrooms": bathrooms,
         "accommodates": accommodates,
@@ -58,16 +50,25 @@ if st.button("Predict Price"):
         "latitude": latitude,
         "longitude": longitude,
         "room_type": room_type,
-        "neighbourhood_cleansed": neighbourhood_cleansed
-    }])
+        "neighbourhood_cleansed": neighbourhood
+    }
+    df = pd.DataFrame([data])
 
-    # Generate prediction
-    prediction = model.predict(input_data)[0]
+    # One-hot encoding must match training
+    df = pd.get_dummies(df, columns=["room_type", "neighbourhood_cleansed"], drop_first=False)
 
-    st.success(f"### Estimated Price: **${prediction:,.2f}** per night")
+    # Add missing columns that model expects
+    for col in model.feature_names_in_:
+        if col not in df.columns:
+            df[col] = 0
 
-# -------------------------------
-# Footer
-# -------------------------------
-st.write("---")
-st.write("Built by Kendall Larson — CIS 508 Final Project")
+    df = df[model.feature_names_in_]
+    return df
+
+# ------------------------------
+# Predict
+# ------------------------------
+if st.button("Predict Price"):
+    X = encode_inputs()
+    prediction = model.predict(X)[0]
+    st.success(f"Estimated Nightly Price: **${prediction:,.2f}**")
