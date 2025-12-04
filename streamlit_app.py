@@ -3,14 +3,14 @@ import numpy as np
 import pandas as pd
 import joblib
 
-st.title("🏡 Airbnb Price Predictor (Neural Network Model)")
+st.title("🏡 Airbnb Price Predictor")
 
 # Load model
 @st.cache_resource
 def load_model():
     return joblib.load("airbnb_nn_model.pkl")
 
-model = load_model()
+model = joblib.load("airbnb_streamlit_safe.pkl")
 
 # User inputs
 bedrooms = st.number_input("Bedrooms", 0, 10, 1)
