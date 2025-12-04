@@ -1,30 +1,24 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
+import pandas as pd
 import joblib
 
-# ==========================
-# LOAD MODEL
-# ==========================
+st.title("🏡 Airbnb Price Predictor (Neural Network Model)")
+
+# Load model
 @st.cache_resource
 def load_model():
-    model = joblib.load("airbnb_nn_model.pkl")   # Make sure file is in the repo
-    return model
+    return joblib.load("airbnb_nn_model.pkl")
 
 model = load_model()
 
-st.title("🏡 Airbnb Price Predictor")
-st.write("Enter listing details below to estimate the nightly price.")
-
-# ==========================
-# USER INPUTS
-# ==========================
-bedrooms = st.number_input("Bedrooms", min_value=0, max_value=10, step=1)
-bathrooms = st.number_input("Bathrooms", min_value=0.0, max_value=10.0, step=0.5)
-accommodates = st.number_input("Accommodates", min_value=0, max_value=20, step=1)
-minimum_nights = st.number_input("Minimum Nights", min_value=1, max_value=365, step=1)
-number_of_reviews = st.number_input("Number of Reviews", min_value=0, max_value=5000, step=1)
-review_scores_rating = st.number_input("Review Score Rating", min_value=20.0, max_value=100.0, step=1.0)
+# User inputs
+bedrooms = st.number_input("Bedrooms", 0, 10, 1)
+bathrooms = st.number_input("Bathrooms", 0.0, 10.0, 1.0)
+accommodates = st.number_input("Accommodates", 1, 16, 2)
+minimum_nights = st.number_input("Minimum Nights", 1, 365, 1)
+number_of_reviews = st.number_input("Number of Reviews", 0, 5000, 10)
+review_scores_rating = st.number_input("Review Score Rating", 0.0, 100.0, 90.0)
 latitude = st.number_input("Latitude", format="%.6f")
 longitude = st.number_input("Longitude", format="%.6f")
 
@@ -33,12 +27,10 @@ room_type = st.selectbox(
     ["Entire home/apt", "Private room", "Shared room", "Hotel room"]
 )
 
-neighbourhood = st.text_input("Neighbourhood", "Unknown")
+neighbourhood = st.text_input("Neighbourhood Cleansed")
 
-# ==========================
-# ENCODING INPUTS
-# ==========================
-def format_input_for_model():
+# Prepare input
+def make_input():
     data = {
         "bedrooms": bedrooms,
         "bathrooms": bathrooms,
@@ -51,26 +43,9 @@ def format_input_for_model():
         "room_type": room_type,
         "neighbourhood_cleansed": neighbourhood
     }
+    return pd.DataFrame([data])
 
-    df = pd.DataFrame([data])
-
-    # One-hot encode same as training
-    df = pd.get_dummies(df, columns=["room_type", "neighbourhood_cleansed"], drop_first=False)
-
-    # Add missing columns
-    for col in model.feature_names_in_:
-        if col not in df.columns:
-            df[col] = 0
-
-    # Order columns correctly
-    df = df[model.feature_names_in_]
-
-    return df
-
-# ==========================
-# PREDICTION BUTTON
-# ==========================
 if st.button("Predict Price"):
-    X = format_input_for_model()
-    prediction = model.predict(X)[0]
-    st.success(f"Estimated Nightly Price: **${prediction:,.2f}**")
+    X = make_input()
+    y_pred = model.predict(X)[0]
+    st.success(f"Estimated nightly price: **${y_pred:,.2f}**")
