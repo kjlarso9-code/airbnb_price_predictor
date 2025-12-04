@@ -19,7 +19,7 @@ def load_model():
 model = load_model()
 
 st.title("🏡 Airbnb Price Predictor")
-st.write("Enter details below to predict nightly price.")
+st.write("Enter listing details below to predict the nightly price.")
 
 # ------------------------------
 # User Inputs
@@ -33,11 +33,17 @@ review_scores_rating = st.number_input("Review Score Rating", min_value=20.0, ma
 latitude = st.number_input("Latitude", format="%.6f")
 longitude = st.number_input("Longitude", format="%.6f")
 
-room_type = st.selectbox("Room Type", ["Hotel room", "Private room", "Shared room", "Entire home/apt"])
+room_type = st.selectbox("Room Type", [
+    "Entire home/apt",
+    "Private room",
+    "Shared room",
+    "Hotel room"
+])
+
 neighbourhood = st.text_input("Neighbourhood")
 
 # ------------------------------
-# Convert to model input format
+# Convert input to correct format
 # ------------------------------
 def encode_inputs():
     data = {
@@ -54,8 +60,10 @@ def encode_inputs():
     }
     df = pd.DataFrame([data])
 
+    # One-hot encoding exactly like training
     df = pd.get_dummies(df, columns=["room_type", "neighbourhood_cleansed"], drop_first=False)
 
+    # Add missing columns the model expects
     for col in model.feature_names_in_:
         if col not in df.columns:
             df[col] = 0
