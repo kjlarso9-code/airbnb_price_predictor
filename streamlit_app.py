@@ -10,7 +10,7 @@ from io import BytesIO
 # ------------------------------
 @st.cache_resource
 def load_model():
-    url = https://"drive.google.com/uc?export=download&id=181rfYZ9EEJCKchFBi_Ct7bpa4nmrxhjD"  # <-- replace with real link
+    url = "https://drive.google.com/uc?export=download&id=181rfYZ9EEJCKchFBi_Ct7bpa4nmrxhjD"
     response = requests.get(url)
     model_bytes = BytesIO(response.content)
     model = joblib.load(model_bytes)
@@ -54,10 +54,8 @@ def encode_inputs():
     }
     df = pd.DataFrame([data])
 
-    # One-hot encoding must match training
     df = pd.get_dummies(df, columns=["room_type", "neighbourhood_cleansed"], drop_first=False)
 
-    # Add missing columns that model expects
     for col in model.feature_names_in_:
         if col not in df.columns:
             df[col] = 0
